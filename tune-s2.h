@@ -61,6 +61,7 @@ struct tune_p
 	int mis;
 	int voltage;
 	int tone;
+	int pls;
 	int LO;
 	int quit;
 };

@@ -149,10 +149,12 @@ int tune(int frontend_fd, struct tune_p *t)
 		{ .cmd = DTV_ROLLOFF,			.u.data = t->rolloff },
 		{ .cmd = DTV_BANDWIDTH_HZ,		.u.data = 0 },
 		{ .cmd = DTV_PILOT,				.u.data = t->pilot },
+		{ .cmd = DTV_STREAM_ID,			.u.data = t->mis },
+		{ .cmd = DTV_SCRAMBLING_SEQUENCE_INDEX,	.u.data = t->pls },
 		{ .cmd = DTV_TUNE },
 	};
 	struct dtv_properties cmdseq_tune = {
-		.num = 12,
+		.num = 14,
 		.props = p_tune
 	};
 
@@ -349,6 +351,8 @@ char *usage =
 	"	-rolloff       : rolloff 35=0.35 25=0.25 20=0.20 0=UNKNOWN\n"
 	"	-inversion N   : spectral inversion (OFF / ON / AUTO [default])\n"
 	"	-pilot N       : pilot (OFF / ON / AUTO [default])\n"
+	"	-mis N         : multi input stream ID\n"
+	"	-pls N         : PLS code (GOLD mode)\n"
 	"	-quit          : quit after tuning, used to time lock aquisition\n"
 	"	-help          : help\n";
 
@@ -391,6 +395,8 @@ int main(int argc, char *argv[])
 	t.freq		= strtoul(argv[1], NULL, 0);
 	t.voltage	= name2value(argv[2], dvb_voltage);
 	t.sr		= strtoul(argv[3], NULL, 0);
+	t.mis		= 0;
+	t.pls		= 0;
 
 	int a;
 	for( a = 4; a < argc; a++ )
@@ -442,6 +448,10 @@ int main(int argc, char *argv[])
 			t.inversion = name2value(argv[a+1], dvb_inversion);
 		if ( !strcmp(argv[a], "-pilot") )
 			t.pilot = name2value(argv[a+1], dvb_pilot);
+		if ( !strcmp(argv[a], "-mis") )
+			t.mis = strtoul(argv[a+1], NULL, 0);
+		if ( !strcmp(argv[a], "-pls") )
+			t.pls = strtoul(argv[a+1], NULL, 0);
 		if ( !strcmp(argv[a], "-help") )
 		{
 			printf("%s", usage);
